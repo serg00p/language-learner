@@ -115,7 +115,7 @@ function selectLevel(index, allowReset=true){
 
 function updateLevelButtons(){
   Array.from(levelButtonsContainer.children).forEach((btn,i)=>{
-    btn.classList.toggle("active", i===currentLevelIndex && usedWords.length>0);
+    btn.classList.toggle("active", i===currentLevelIndex);
   });
 }
 
@@ -132,11 +132,7 @@ function toggleArticleButtons(show){
 }
 
 function getRandomWord(){
-  let word;
-  do { word = currentLevelWords[Math.floor(Math.random()*currentLevelWords.length)]; }
-  while(usedWords.includes(word));
-  usedWords.push(word);
-  return word;
+  return currentLevelWords[Math.floor(Math.random()*currentLevelWords.length)];
 }
 
 function displayNewWord(){
@@ -167,6 +163,7 @@ function checkAndNextWord(){
     popup.className="popup correct";
     document.getElementById("correctSound").play();
     popup.style.display="block";
+    usedWords.push(currentWord); // only increment after correct
     setTimeout(()=>{ popup.style.display="none"; displayNewWord(); },1500);
   } else {
     message.innerText = `Wrong! Correct: ${currentWord.en}`;
