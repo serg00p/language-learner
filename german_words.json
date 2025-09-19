@@ -2,31 +2,31 @@
   {
     "name": "Colors",
     "words": [
-      {"uk": "білий", "en": "weiß", "requiresArticle": false},
-      {"uk": "зелений", "en": "grün", "requiresArticle": false},
-      {"uk": "синій", "en": "blau", "requiresArticle": false},
-      {"uk": "червоний", "en": "rot", "requiresArticle": false},
-      {"uk": "жовтий", "en": "gelb", "requiresArticle": false}
+      {"uk": "білий", "en": "weiß", "requiresArticle": false, "imageQuery": "white color"},
+      {"uk": "зелений", "en": "grün", "requiresArticle": false, "imageQuery": "green color"},
+      {"uk": "синій", "en": "blau", "requiresArticle": false, "imageQuery": "blue color"},
+      {"uk": "червоний", "en": "rot", "requiresArticle": false, "imageQuery": "red color"},
+      {"uk": "жовтий", "en": "gelb", "requiresArticle": false, "imageQuery": "yellow color"}
     ]
   },
   {
     "name": "Animals",
     "words": [
-      {"uk": "кіт", "en": "die Katze", "requiresArticle": true},
-      {"uk": "собака", "en": "der Hund", "requiresArticle": true},
-      {"uk": "птах", "en": "der Vogel", "requiresArticle": true},
-      {"uk": "кролик", "en": "der Hase", "requiresArticle": true},
-      {"uk": "корова", "en": "die Kuh", "requiresArticle": true}
+      {"uk": "кіт", "en": "die Katze", "requiresArticle": true, "imageQuery": "cat"},
+      {"uk": "собака", "en": "der Hund", "requiresArticle": true, "imageQuery": "dog"},
+      {"uk": "птах", "en": "der Vogel", "requiresArticle": true, "imageQuery": "bird"},
+      {"uk": "кролик", "en": "der Hase", "requiresArticle": true, "imageQuery": "rabbit"},
+      {"uk": "корова", "en": "die Kuh", "requiresArticle": true, "imageQuery": "cow"}
     ]
   },
   {
     "name": "Fruits",
     "words": [
-      {"uk": "яблуко", "en": "der Apfel", "requiresArticle": true},
-      {"uk": "банан", "en": "die Banane", "requiresArticle": true},
-      {"uk": "виноград", "en": "die Traube", "requiresArticle": true},
-      {"uk": "груша", "en": "die Birne", "requiresArticle": true},
-      {"uk": "апельсин", "en": "die Orange", "requiresArticle": true}
+      {"uk": "яблуко", "en": "der Apfel", "requiresArticle": true, "imageQuery": "apple"},
+      {"uk": "банан", "en": "die Banane", "requiresArticle": true, "imageQuery": "banana"},
+      {"uk": "виноград", "en": "die Traube", "requiresArticle": true, "imageQuery": "grapes"},
+      {"uk": "груша", "en": "die Birne", "requiresArticle": true, "imageQuery": "pear"},
+      {"uk": "апельсин", "en": "die Orange", "requiresArticle": true, "imageQuery": "orange fruit"}
     ]
   }
 ]
