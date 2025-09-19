@@ -5,21 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Word Trainer</title>
 <style>
-  body { font-family: Arial, sans-serif; background:#f0f2f5; display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh; margin:0; }
-  #language-buttons, #level-buttons, #article-buttons { text-align:center; margin:10px 0; }
-  #language-buttons button, #level-buttons button, #article-buttons button { margin:5px; padding:8px 16px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background:#2196F3; color:white; }
-  #language-buttons button.active, #level-buttons button.active, #article-buttons button.selected { box-shadow:0 0 10px #666; background-color: #4CAF50;}
-  .container { text-align:center; background:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.2); width:350px; }
-  #progress-container { width:100%; background:#ddd; border-radius:5px; margin-bottom:10px; height:20px; overflow:hidden; }
-  #progress-bar { height:100%; width:0; background:#4CAF50; border-radius:5px; transition: width 0.3s ease; }
-  .word { font-size:24px; font-weight:bold; margin-bottom:10px; }
-  input { font-size:18px; padding:5px; border:2px solid #ccc; border-radius:5px; text-align:center; width:100%; box-sizing:border-box; }
-  button.check { margin-top:10px; padding:10px 20px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background:#4CAF50; color:white; }
-  .popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.2); text-align:center; width:300px; z-index:1000; }
-  .popup.correct { border:2px solid #4CAF50; }
-  .popup.wrong { border:2px solid #ff4d4d; }
-  .popup.completed { border:2px solid #4CAF50; }
-  .close-btn { margin-top:10px; padding:5px 10px; border:none; background:#007bff; color:white; border-radius:5px; cursor:pointer; }
+body { font-family: Arial, sans-serif; background:#f0f2f5; display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh; margin:0; }
+#language-buttons, #level-buttons, #article-buttons { text-align:center; margin:10px 0; }
+#language-buttons button, #level-buttons button, #article-buttons button { margin:5px; padding:8px 16px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background:#2196F3; color:white; }
+#language-buttons button.active, #level-buttons button.active, #article-buttons button.selected { box-shadow:0 0 10px #666; background-color: #4CAF50;}
+.container { text-align:center; background:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.2); width:350px; }
+#progress-container { width:100%; background:#ddd; border-radius:5px; margin-bottom:10px; height:20px; overflow:hidden; }
+#progress-bar { height:100%; width:0; background:#4CAF50; border-radius:5px; transition: width 0.3s ease; }
+.word { font-size:24px; font-weight:bold; margin-bottom:10px; }
+input { font-size:18px; padding:5px; border:2px solid #ccc; border-radius:5px; text-align:center; width:100%; box-sizing:border-box; }
+button.check { margin-top:10px; padding:10px 20px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background:#4CAF50; color:white; }
+.popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.2); text-align:center; width:300px; z-index:1000; }
+.popup.correct { border:2px solid #4CAF50; }
+.popup.wrong { border:2px solid #ff4d4d; }
+.popup.completed { border:2px solid #4CAF50; }
+.close-btn { margin-top:10px; padding:5px 10px; border:none; background:#007bff; color:white; border-radius:5px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -57,7 +57,7 @@
 let allLevels = [];
 let currentLevelIndex = null;
 let currentLevelWords = [];
-let usedWords = [];
+let remainingWords = [];
 let wrongWords = [];
 let currentWord = {};
 let currentLanguage = "english";
@@ -74,16 +74,18 @@ async function loadWords(language){
   currentLanguage = language;
   selectedArticle = null;
   articleButtons.forEach(b=>b.classList.remove("selected"));
-  
-  // Load JSON for selected language
-  allLevels = language==="english"? await fetch('english_words.json').then(r=>r.json()) 
+
+  allLevels = language==="english"? await fetch('english_words.json').then(r=>r.json())
                                   : await fetch('german_words.json').then(r=>r.json());
-  
+
   createLevelButtons();
   highlightLanguageButton();
 
-  // Reset current level selection
+  // reset level selection
   currentLevelIndex = null;
+  currentLevelWords = [];
+  remainingWords = [];
+  wrongWords = [];
   document.getElementById("word").innerText = "";
   document.getElementById("answer").value = "";
   toggleArticleButtons(false);
@@ -97,9 +99,7 @@ function createLevelButtons(){
     btn.onclick = ()=>selectLevel(i, currentLevelIndex!==i);
     levelButtonsContainer.appendChild(btn);
   });
-
-  // Remove active class from all buttons
-  Array.from(levelButtonsContainer.children).forEach(btn=>btn.classList.remove("active"));
+  updateLevelButtons();
 }
 
 function highlightLanguageButton(){
@@ -108,10 +108,10 @@ function highlightLanguageButton(){
 }
 
 function selectLevel(index, allowReset=true){
-  if(currentLevelIndex===index && !allowReset) return; // do nothing if clicked same level
+  if(currentLevelIndex===index && !allowReset) return;
   currentLevelIndex = index;
-  currentLevelWords = allLevels[index].words;
-  usedWords = [];
+  currentLevelWords = [...allLevels[index].words];
+  remainingWords = [...currentLevelWords];
   wrongWords = [];
   currentWord = {};
   selectedArticle = null;
@@ -138,13 +138,16 @@ function toggleArticleButtons(show){
   document.getElementById("article-buttons").style.display = show?"block":"none";
 }
 
-function getRandomWord(){
-  return currentLevelWords[Math.floor(Math.random()*currentLevelWords.length)];
+function getNextWord(){
+  if(remainingWords.length===0) return null;
+  const index = Math.floor(Math.random()*remainingWords.length);
+  const word = remainingWords[index];
+  return word;
 }
 
 function displayNewWord(){
-  if(usedWords.length>=currentLevelWords.length){ showLevelComplete(); return; }
-  currentWord = getRandomWord();
+  if(remainingWords.length===0){ showLevelComplete(); return; }
+  currentWord = getNextWord();
   document.getElementById("word").innerText = currentWord.uk;
   document.getElementById("answer").value = "";
   selectedArticle = null;
@@ -154,7 +157,8 @@ function displayNewWord(){
 }
 
 function updateProgressBar(){
-  document.getElementById("progress-bar").style.width = (usedWords.length/currentLevelWords.length*100)+"%";
+  const completed = currentLevelWords.length - remainingWords.length;
+  document.getElementById("progress-bar").style.width = (completed/currentLevelWords.length*100)+"%";
 }
 
 function checkAndNextWord(){
@@ -170,7 +174,8 @@ function checkAndNextWord(){
     popup.className="popup correct";
     document.getElementById("correctSound").play();
     popup.style.display="block";
-    usedWords.push(currentWord); // only increment after correct
+    // remove word from remainingWords
+    remainingWords = remainingWords.filter(w=>w!==currentWord);
     setTimeout(()=>{ popup.style.display="none"; displayNewWord(); },1500);
   } else {
     message.innerText = `Wrong! Correct: ${currentWord.en}`;
@@ -199,7 +204,6 @@ function showLevelComplete(){
 languageButtons.english.onclick = ()=>loadWords("english");
 languageButtons.german.onclick = ()=>loadWords("german");
 
-// Load English by default
 window.onload = ()=>loadWords("english");
 </script>
 
