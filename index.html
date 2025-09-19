@@ -62,13 +62,14 @@ const languageButtons = {
   german: document.getElementById("german-btn")
 };
 
-// Load words from the correct JSON file
+// Load words from JSON file
 async function loadWords(language) {
   currentLanguage = language;
   try {
     const response = await fetch(language === "english" ? "english_words.json" : "german_words.json");
     allWords = await response.json();
 
+    // Split into levels
     levels = [];
     for (let i = 0; i < Math.ceil(allWords.length / wordsPerLevel); i++) {
       levels.push(allWords.slice(i * wordsPerLevel, (i + 1) * wordsPerLevel));
@@ -87,7 +88,6 @@ function highlightLanguageButton() {
   languageButtons.german.classList.toggle("active", currentLanguage === "german");
 }
 
-// Level selection (always start at 0)
 function selectLevel(levelIndex) {
   currentLevel = levelIndex;
   currentLevelWords = levels[currentLevel];
@@ -118,12 +118,22 @@ function displayNewWord() {
   document.getElementById("answer").value = "";
 }
 
+// Check answer, ignore German article if present
 function checkAndNextWord() {
   const userInput = document.getElementById("answer").value.trim().toLowerCase();
   const popup = document.getElementById("popup");
   const message = document.getElementById("popup-message");
 
-  if (userInput === currentWord.en) {
+  let correctWord = currentWord.en;
+
+  if (currentLanguage === "german") {
+    // Remove article for comparison
+    correctWord = currentWord.en.split(' ').pop().toLowerCase();
+  } else {
+    correctWord = currentWord.en.toLowerCase();
+  }
+
+  if (userInput === correctWord) {
     message.innerText = "Correct!";
     popup.className = "popup correct";
     document.getElementById("correctSound1").play();
@@ -160,13 +170,12 @@ function showLevelCompleteScreen() {
   popup.style.display = "block";
 }
 
-// Add event listeners for language buttons
+// Language button events
 languageButtons.english.onclick = () => loadWords("english");
 languageButtons.german.onclick = () => loadWords("german");
 
-// Load English by default on page load
+// Load English by default
 window.onload = () => loadWords("english");
 </script>
-
 </body>
 </html>
