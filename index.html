@@ -18,7 +18,6 @@ button.check { margin-top:10px; padding:10px 20px; font-size:16px; border:none; 
 .popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.2); text-align:center; width:300px; z-index:1000; }
 .popup.correct { border:2px solid #4CAF50; }
 .popup.wrong { border:2px solid #ff4d4d; }
-.popup.completed { border:2px solid #4CAF50; }
 .close-btn { margin-top:10px; padding:5px 10px; border:none; background:#007bff; color:white; border-radius:5px; cursor:pointer; }
 </style>
 </head>
@@ -42,12 +41,12 @@ button.check { margin-top:10px; padding:10px 20px; font-size:16px; border:none; 
   <div class="word" id="word"></div>
   <input type="text" id="answer" maxlength="30" placeholder="Type your answer">
   <br>
-  <button class="check" onclick="checkAndNextWord()">Check & Next</button>
+  <button class="check" onclick="checkWord()">Check</button>
 </div>
 
 <div id="popup" class="popup">
   <p id="popup-message"></p>
-  <button class="close-btn" onclick="closePopup()">Close</button>
+  <button class="close-btn" id="popup-btn">Close</button>
 </div>
 
 <audio id="correctSound" src="https://www.myinstants.com/media/sounds/correct.mp3"></audio>
@@ -71,21 +70,19 @@ const levelButtonsContainer = document.getElementById("level-buttons");
 const articleButtons = Array.from(document.querySelectorAll("#article-buttons button"));
 const popup = document.getElementById("popup");
 const popupMessage = document.getElementById("popup-message");
-const closeBtn = popup.querySelector(".close-btn");
+const popupBtn = document.getElementById("popup-btn");
 
 async function loadWords(language){
   currentLanguage = language;
   selectedArticle = null;
   articleButtons.forEach(b=>b.classList.remove("selected"));
   
-  // Load JSON for selected language
   allLevels = language==="english"? await fetch('english_words.json').then(r=>r.json())
                                   : await fetch('german_words.json').then(r=>r.json());
   
   createLevelButtons();
   highlightLanguageButton();
 
-  // Reset current level selection and progress
   currentLevelIndex = null;
   currentLevelWords = [];
   remainingWords = [];
@@ -93,7 +90,7 @@ async function loadWords(language){
   document.getElementById("word").innerText = "";
   document.getElementById("answer").value = "";
   updateProgressBar();
-  updateLevelButtons(); // remove highlights
+  updateLevelButtons();
   toggleArticleButtons(false);
 }
 
@@ -166,7 +163,7 @@ function updateProgressBar(){
   document.getElementById("progress-bar").style.width = percent+"%";
 }
 
-function checkAndNextWord(){
+function checkWord(){
   if(!currentWord) return;
 
   let userInput = document.getElementById("answer").value.trim().toLowerCase();
@@ -176,32 +173,34 @@ function checkAndNextWord(){
 
   if(userInput === currentWord.en.toLowerCase()){
     document.getElementById("correctSound").play();
-    // remove word from remainingWords
     remainingWords = remainingWords.filter(w=>w!==currentWord);
     updateProgressBar();
-    displayNewWord();
+    popupMessage.innerText = "Correct!";
+    popup.className = "popup correct";
+    popupBtn.innerText = "Next Word";
+    popupBtn.onclick = ()=>{ popup.style.display="none"; displayNewWord(); };
+    popup.style.display = "block";
   } else {
     document.getElementById("wrongSound").play();
     if(!wrongWords.includes(currentWord.uk)) wrongWords.push(currentWord.uk);
+    popupMessage.innerText = `Wrong! Correct: ${currentWord.en}`;
+    popup.className = "popup wrong";
+    popupBtn.innerText = "Try Again";
+    popupBtn.onclick = ()=>{ popup.style.display="none"; document.getElementById("answer").value=""; };
+    popup.style.display = "block";
   }
 }
 
 function showLevelComplete(){
   popupMessage.innerText = `Level ${allLevels[currentLevelIndex].name} complete!\n` + 
                            (wrongWords.length ? "Review: "+wrongWords.join(", ") : "All correct!");
-  popup.className="popup completed";
-
-  closeBtn.innerText = "Restart Level";
-  closeBtn.onclick = ()=>{
+  popup.className="popup correct";
+  popupBtn.innerText = "Restart Level";
+  popupBtn.onclick = ()=>{
     popup.style.display="none";
     selectLevel(currentLevelIndex, true);
   };
   popup.style.display="block";
-}
-
-function closePopup(){
-  popup.style.display="none";
-  popup.className="popup";
 }
 
 languageButtons.english.onclick = ()=>loadWords("english");
