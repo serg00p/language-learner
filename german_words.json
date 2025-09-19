@@ -1,18 +1,32 @@
 [
   {
     "name": "Colors",
-    "words":[
-      {"uk":"білий","en":"weiss","requiresArticle":false},
-      {"uk":"зелений","en":"grün","requiresArticle":false},
-      {"uk":"синій","en":"blau","requiresArticle":false}
+    "words": [
+      {"uk": "білий", "en": "weiß", "requiresArticle": false},
+      {"uk": "зелений", "en": "grün", "requiresArticle": false},
+      {"uk": "синій", "en": "blau", "requiresArticle": false},
+      {"uk": "червоний", "en": "rot", "requiresArticle": false},
+      {"uk": "жовтий", "en": "gelb", "requiresArticle": false}
     ]
   },
   {
     "name": "Animals",
-    "words":[
-      {"uk":"кіт","en":"der katze","requiresArticle":true},
-      {"uk":"собака","en":"die hunde","requiresArticle":true},
-      {"uk":"птах","en":"der vogel","requiresArticle":true}
+    "words": [
+      {"uk": "кіт", "en": "die Katze", "requiresArticle": true},
+      {"uk": "собака", "en": "der Hund", "requiresArticle": true},
+      {"uk": "птах", "en": "der Vogel", "requiresArticle": true},
+      {"uk": "кролик", "en": "der Hase", "requiresArticle": true},
+      {"uk": "корова", "en": "die Kuh", "requiresArticle": true}
+    ]
+  },
+  {
+    "name": "Fruits",
+    "words": [
+      {"uk": "яблуко", "en": "der Apfel", "requiresArticle": true},
+      {"uk": "банан", "en": "die Banane", "requiresArticle": true},
+      {"uk": "виноград", "en": "die Traube", "requiresArticle": true},
+      {"uk": "груша", "en": "die Birne", "requiresArticle": true},
+      {"uk": "апельсин", "en": "die Orange", "requiresArticle": true}
     ]
   }
 ]
