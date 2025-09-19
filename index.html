@@ -5,21 +5,136 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Тренажер Слів</title>
 <style>
-body { font-family: Arial, sans-serif; background:#f0f2f5; display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh; margin:0; }
-#language-buttons, #level-buttons, #article-buttons, #mode-buttons { text-align:center; margin:10px 0; }
-#language-buttons button, #level-buttons button, #article-buttons button, #mode-buttons button { margin:5px; padding:8px 16px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background:#2196F3; color:white; }
-#language-buttons button.active, #level-buttons button.active, #article-buttons button.selected, #mode-buttons button.active { box-shadow:0 0 10px #666; background-color: #4CAF50;}
-.container { text-align:center; background:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.2); width:350px; }
-#progress-container { width:100%; background:#ddd; border-radius:5px; margin-bottom:10px; height:20px; overflow:hidden; }
-#progress-bar { height:100%; width:0; background:#4CAF50; border-radius:5px; transition: width 0.3s ease; }
-.word { font-size:24px; font-weight:bold; margin-bottom:10px; }
-#word-image { max-width:100%; max-height:200px; border-radius:8px; margin-bottom:10px; display:none; }
-input { font-size:18px; padding:5px; border:2px solid #ccc; border-radius:5px; text-align:center; width:100%; box-sizing:border-box; }
-button.check { margin-top:10px; padding:10px 20px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background:#4CAF50; color:white; }
-.popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.2); text-align:center; width:300px; z-index:1000; }
-.popup.correct { border:2px solid #4CAF50; }
-.popup.wrong { border:2px solid #ff4d4d; }
-.close-btn { margin-top:10px; padding:5px 10px; border:none; background:#007bff; color:white; border-radius:5px; cursor:pointer; }
+body { 
+  font-family: Arial, sans-serif; 
+  background:#f0f2f5; 
+  display:flex; 
+  flex-direction:column; 
+  justify-content:center; 
+  align-items:center; 
+  min-height:100vh; 
+  margin:0; 
+}
+
+#language-buttons, #level-buttons, #mode-buttons { 
+  text-align:center; 
+  margin:10px 0; 
+}
+
+#language-buttons button, #level-buttons button, #article-buttons button, #mode-buttons button { 
+  margin:5px; 
+  padding:8px 16px; 
+  font-size:16px; 
+  border:none; 
+  border-radius:5px; 
+  cursor:pointer; 
+  background:#2196F3; 
+  color:white; 
+}
+
+#language-buttons button.active, #level-buttons button.active, #article-buttons button.selected, #mode-buttons button.active { 
+  box-shadow:0 0 10px #666; 
+  background-color: #4CAF50;
+}
+
+.container { 
+  text-align:center; 
+  background:#fff; 
+  padding:20px; 
+  border-radius:10px; 
+  box-shadow:0 4px 12px rgba(0,0,0,0.2); 
+  width:350px; 
+}
+
+#progress-container { 
+  width:100%; 
+  background:#ddd; 
+  border-radius:5px; 
+  margin-bottom:10px; 
+  height:20px; 
+  overflow:hidden; 
+}
+
+#progress-bar { 
+  height:100%; 
+  width:0; 
+  background:#4CAF50; 
+  border-radius:5px; 
+  transition: width 0.3s ease; 
+}
+
+.word { 
+  font-size:24px; 
+  font-weight:bold; 
+  margin-bottom:10px; 
+}
+
+#word-image { 
+  display: block; 
+  max-width:100%; 
+  max-height:200px; 
+  border-radius:8px; 
+  margin:0 auto 10px auto; /* centers the image */
+}
+
+#article-buttons {
+  margin: 10px 0;
+  text-align: center; /* center buttons */
+}
+
+input { 
+  font-size:18px; 
+  padding:5px; 
+  border:2px solid #ccc; 
+  border-radius:5px; 
+  text-align:center; 
+  width:100%; 
+  box-sizing:border-box; 
+}
+
+button.check { 
+  margin-top:10px; 
+  padding:10px 20px; 
+  font-size:16px; 
+  border:none; 
+  border-radius:5px; 
+  cursor:pointer; 
+  background:#4CAF50; 
+  color:white; 
+}
+
+.popup { 
+  display:none; 
+  position:fixed; 
+  top:50%; 
+  left:50%; 
+  transform:translate(-50%,-50%); 
+  background:white; 
+  padding:20px; 
+  border-radius:10px; 
+  box-shadow:0 4px 8px rgba(0,0,0,0.2); 
+  text-align:center; 
+  width:300px; 
+  z-index:1000; 
+}
+
+.popup.correct { 
+  border:2px solid #4CAF50; 
+}
+
+.popup.wrong { 
+  border:2px solid #ff4d4d; 
+}
+
+.close-btn { 
+  margin-top:10px; 
+  padding:5px 10px; 
+  border:none; 
+  background:#007bff; 
+  color:white; 
+  border-radius:5px; 
+  cursor:pointer; 
+}
 </style>
 </head>
 <body>
@@ -35,20 +150,23 @@ button.check { margin-top:10px; padding:10px 20px; font-size:16px; border:none; 
 </div>
 
 <div id="level-buttons"></div>
-<div id="article-buttons">
-  <button data-article="der">Der</button>
-  <button data-article="die">Die</button>
-  <button data-article="das">Das</button>
-</div>
 
 <div class="container">
   <h1>Тренажер Слів</h1>
   <div id="progress-container"><div id="progress-bar"></div></div>
   <div class="word" id="word"></div>
   <img id="word-image" alt="Word illustration">
+
+  <!-- Article buttons above input field -->
+  <div id="article-buttons">
+    <button data-article="der">Der</button>
+    <button data-article="die">Die</button>
+    <button data-article="das">Das</button>
+  </div>
+
   <input type="text" id="answer" maxlength="30" placeholder="Введіть слово">
   <br>
-  <button class="check" onclick="checkWord()">Перевірити</button>
+  <button class="check">Перевірити</button>
 </div>
 
 <div id="popup" class="popup">
