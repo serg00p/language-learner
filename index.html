@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Word Trainer</title>
+<title>Тренажер Слів</title>
 <style>
 body { font-family: Arial, sans-serif; background:#f0f2f5; display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh; margin:0; }
 #language-buttons, #level-buttons, #article-buttons { text-align:center; margin:10px 0; }
@@ -24,8 +24,8 @@ button.check { margin-top:10px; padding:10px 20px; font-size:16px; border:none; 
 <body>
 
 <div id="language-buttons">
-  <button id="english-btn">English</button>
-  <button id="german-btn">German</button>
+  <button id="english-btn">Англійська</button>
+  <button id="german-btn">Німецька</button>
 </div>
 
 <div id="level-buttons"></div>
@@ -36,17 +36,17 @@ button.check { margin-top:10px; padding:10px 20px; font-size:16px; border:none; 
 </div>
 
 <div class="container">
-  <h1>Word Trainer</h1>
+  <h1>Тренажер Слів</h1>
   <div id="progress-container"><div id="progress-bar"></div></div>
   <div class="word" id="word"></div>
-  <input type="text" id="answer" maxlength="30" placeholder="Type your answer">
+  <input type="text" id="answer" maxlength="30" placeholder="Введіть слово">
   <br>
-  <button class="check" onclick="checkWord()">Check</button>
+  <button class="check" onclick="checkWord()">Перевірити</button>
 </div>
 
 <div id="popup" class="popup">
   <p id="popup-message"></p>
-  <button class="close-btn" id="popup-btn">Close</button>
+  <button class="close-btn" id="popup-btn">Закрити</button>
 </div>
 
 <audio id="correctSound" src="https://www.myinstants.com/media/sounds/correct.mp3"></audio>
@@ -175,27 +175,32 @@ function checkWord(){
     document.getElementById("correctSound").play();
     remainingWords = remainingWords.filter(w=>w!==currentWord);
     updateProgressBar();
-    popupMessage.innerText = "Correct!";
+
+    popupMessage.innerText = "Правильно!";
     popup.className = "popup correct";
-    popupBtn.innerText = "Next Word";
-    popupBtn.onclick = ()=>{ popup.style.display="none"; displayNewWord(); };
     popup.style.display = "block";
+
+    setTimeout(()=>{
+      popup.style.display = "none";
+      displayNewWord();
+    }, 1200); // Show popup 1.2 seconds
   } else {
     document.getElementById("wrongSound").play();
     if(!wrongWords.includes(currentWord.uk)) wrongWords.push(currentWord.uk);
-    popupMessage.innerText = `Wrong! Correct: ${currentWord.en}`;
+
+    popupMessage.innerText = `Неправильно! Правильна відповідь: ${currentWord.en}`;
     popup.className = "popup wrong";
-    popupBtn.innerText = "Try Again";
+    popupBtn.innerText = "Спробувати ще раз";
     popupBtn.onclick = ()=>{ popup.style.display="none"; document.getElementById("answer").value=""; };
     popup.style.display = "block";
   }
 }
 
 function showLevelComplete(){
-  popupMessage.innerText = `Level ${allLevels[currentLevelIndex].name} complete!\n` + 
-                           (wrongWords.length ? "Review: "+wrongWords.join(", ") : "All correct!");
+  popupMessage.innerText = `Рівень "${allLevels[currentLevelIndex].name}" завершено!\n` + 
+                           (wrongWords.length ? "Повторіть: "+wrongWords.join(", ") : "Всі правильно!");
   popup.className="popup correct";
-  popupBtn.innerText = "Restart Level";
+  popupBtn.innerText = "Перезапустити рівень";
   popupBtn.onclick = ()=>{
     popup.style.display="none";
     selectLevel(currentLevelIndex, true);
