@@ -15,8 +15,8 @@
   .word { font-size:24px; font-weight:bold; margin-bottom:10px; }
   input { font-size:18px; padding:5px; border:2px solid #ccc; border-radius:5px; text-align:center; width:100%; box-sizing:border-box; margin-bottom:10px; }
   #article-buttons { margin-bottom:10px; }
-  #article-buttons button { margin:0 5px; padding:5px 15px; font-size:16px; border:none; border-radius:5px; cursor:pointer; }
-  #article-buttons button.selected { background:#4CAF50; color:white; }
+  #article-buttons button { margin:0 5px; padding:5px 15px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background:#eee; color:#333; }
+  #article-buttons button.selected { background:#4CAF50; color:white; font-weight:bold; box-shadow: 0 0 5px #333; }
   button { margin-top:5px; padding:10px 20px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background:#4CAF50; color:white; }
   .popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.2); text-align:center; width:300px; z-index:1000; }
   .popup.correct { border:2px solid #4CAF50; }
@@ -80,6 +80,7 @@ const articleButtons = document.querySelectorAll("#article-buttons button");
 async function loadWords(language) {
   currentLanguage = language;
   selectedArticle = null;
+  articleButtons.forEach(b => b.classList.remove("selected"));
   try {
     const response = await fetch(language === "english" ? "english_words.json" : "german_words.json");
     allWords = await response.json();
