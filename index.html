@@ -6,10 +6,10 @@
 <title>Word Trainer</title>
 <style>
   body { font-family: Arial, sans-serif; background:#f0f2f5; display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh; margin:0; }
-  #language-buttons { text-align:center; margin:20px 0; }
-  #language-buttons button { margin:5px; padding:10px 20px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background:#2196F3; color:white; }
-  #language-buttons button.active { box-shadow:0 0 10px #666; }
-  .container { text-align:center; background:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.2); width:320px; }
+  #language-buttons, #level-buttons { text-align:center; margin:20px 0; }
+  #language-buttons button, #level-buttons button { margin:5px; padding:10px 20px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background:#2196F3; color:white; }
+  #language-buttons button.active, #level-buttons button.active { box-shadow:0 0 10px #666; background:#4CAF50; }
+  .container { text-align:center; background:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.2); width:350px; }
   #progress-container { width:100%; background:#ddd; border-radius:5px; margin-bottom:10px; height:20px; overflow:hidden; }
   #progress-bar { height:100%; width:0; background:#4CAF50; border-radius:5px; transition: width 0.3s ease; }
   .word { font-size:24px; font-weight:bold; margin-bottom:10px; }
@@ -21,7 +21,6 @@
   .popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.2); text-align:center; width:300px; z-index:1000; }
   .popup.correct { border:2px solid #4CAF50; }
   .popup.wrong { border:2px solid #ff4d4d; }
-  .popup.completed { border:2px solid #4CAF50; }
   .close-btn { margin-top:10px; padding:5px 10px; border:none; background:#007bff; color:white; border-radius:5px; cursor:pointer; }
 </style>
 </head>
@@ -31,6 +30,8 @@
   <button id="english-btn">English</button>
   <button id="german-btn">German</button>
 </div>
+
+<div id="level-buttons"></div>
 
 <div class="container">
   <h1>Word Trainer</h1>
@@ -46,7 +47,8 @@
 
   <input type="text" id="answer" maxlength="30" placeholder="Type your answer">
   <br>
-  <button id="nextButton" onclick="checkAndNextWord()">Check & Next</button>
+  <button id="checkButton" onclick="checkAnswer()">Check</button>
+  <button id="nextButton" onclick="displayNewWord()">Next Word</button>
 </div>
 
 <div id="popup" class="popup">
@@ -64,7 +66,6 @@ let levels = [];
 let currentLevel = 0;
 let currentLevelWords = [];
 let usedWords = [];
-let wrongWords = [];
 let currentWord = {};
 let currentLanguage = "english";
 let selectedArticle = null;
@@ -73,152 +74,141 @@ const languageButtons = {
   english: document.getElementById("english-btn"),
   german: document.getElementById("german-btn")
 };
-
+const levelButtonsContainer = document.getElementById("level-buttons");
 const articleButtons = document.querySelectorAll("#article-buttons button");
 
-// Load words from JSON file
-async function loadWords(language) {
+// Sample word lists (replace with fetch for JSON in production)
+const englishWords = [
+  {uk:"кіт", en:"cat"}, {uk:"собака", en:"dog"}, {uk:"яблуко", en:"apple"},
+  {uk:"будинок", en:"house"}, {uk:"книга", en:"book"}, {uk:"стіл", en:"table"},
+];
+const germanWords = [
+  {uk:"кіт", en:"der katze"}, {uk:"собака", en:"die hunde"}, {uk:"яблуко", en:"das apfel"},
+  {uk:"будинок", en:"das haus"}, {uk:"книга", en:"die buch"}, {uk:"стіл", en:"der tisch"},
+];
+
+function loadWords(language){
   currentLanguage = language;
   selectedArticle = null;
-  articleButtons.forEach(b => b.classList.remove("selected"));
-  try {
-    const response = await fetch(language === "english" ? "english_words.json" : "german_words.json");
-    allWords = await response.json();
+  articleButtons.forEach(b=>b.classList.remove("selected"));
+  allWords = language==="english"? englishWords : germanWords;
 
-    levels = [];
-    for (let i = 0; i < Math.ceil(allWords.length / wordsPerLevel); i++) {
-      levels.push(allWords.slice(i * wordsPerLevel, (i + 1) * wordsPerLevel));
-    }
-
-    highlightLanguageButton();
-    toggleArticleButtons();
-    selectLevel(0);
-  } catch (err) {
-    console.error("Error loading words:", err);
-    document.getElementById("word").innerText = "Failed to load words.";
+  // split into levels
+  levels = [];
+  for(let i=0;i<Math.ceil(allWords.length/wordsPerLevel);i++){
+    levels.push(allWords.slice(i*wordsPerLevel,(i+1)*wordsPerLevel));
   }
+
+  highlightLanguageButton();
+  createLevelButtons();
+  toggleArticleButtons();
+  selectLevel(0);
 }
 
-function highlightLanguageButton() {
-  languageButtons.english.classList.toggle("active", currentLanguage === "english");
-  languageButtons.german.classList.toggle("active", currentLanguage === "german");
+function highlightLanguageButton(){
+  languageButtons.english.classList.toggle("active", currentLanguage==="english");
+  languageButtons.german.classList.toggle("active", currentLanguage==="german");
 }
 
-function toggleArticleButtons() {
-  document.getElementById("article-buttons").style.display = currentLanguage === "german" ? "block" : "none";
+function createLevelButtons(){
+  levelButtonsContainer.innerHTML="";
+  levels.forEach((lvl,i)=>{
+    const btn=document.createElement("button");
+    btn.textContent=`Level ${i+1}`;
+    btn.onclick=()=>selectLevel(i);
+    levelButtonsContainer.appendChild(btn);
+  });
+  updateLevelButtons();
 }
 
-articleButtons.forEach(btn => {
-  btn.onclick = () => {
-    selectedArticle = btn.dataset.article;
-    articleButtons.forEach(b => b.classList.remove("selected"));
+function updateLevelButtons(){
+  Array.from(levelButtonsContainer.children).forEach((btn,i)=>{
+    btn.classList.toggle("active", i===currentLevel);
+  });
+}
+
+function toggleArticleButtons(){
+  document.getElementById("article-buttons").style.display=currentLanguage==="german"?"block":"none";
+}
+
+articleButtons.forEach(btn=>{
+  btn.onclick=()=>{
+    selectedArticle=btn.dataset.article;
+    articleButtons.forEach(b=>b.classList.remove("selected"));
     btn.classList.add("selected");
   };
 });
 
-function selectLevel(levelIndex) {
-  currentLevel = levelIndex;
-  currentLevelWords = levels[currentLevel];
-  usedWords = [];
-  wrongWords = [];
-  updateProgressBar();
+function selectLevel(levelIndex){
+  currentLevel=levelIndex;
+  currentLevelWords=levels[currentLevel];
+  usedWords=[];
+  updateLevelButtons();
   displayNewWord();
 }
 
-function updateProgressBar() {
-  document.getElementById("progress-bar").style.width =
-    (usedWords.length / currentLevelWords.length) * 100 + "%";
+function displayNewWord(){
+  if(currentLevelWords.length===0) return;
+  currentWord=currentLevelWords[Math.floor(Math.random()*currentLevelWords.length)];
+  document.getElementById("word").innerText=currentWord.uk;
+  document.getElementById("answer").value="";
+  selectedArticle=null;
+  articleButtons.forEach(b=>b.classList.remove("selected"));
+  updateProgress();
 }
 
-function getRandomWord() {
-  let word;
-  do { word = currentLevelWords[Math.floor(Math.random() * currentLevelWords.length)]; }
-  while (usedWords.includes(word));
-  usedWords.push(word);
-  return word;
+function updateProgress(){
+  document.getElementById("progress-bar").style.width=(usedWords.length/currentLevelWords.length)*100+"%";
 }
 
-function displayNewWord() {
-  updateProgressBar();
-  selectedArticle = null;
-  articleButtons.forEach(b => b.classList.remove("selected"));
+function checkAnswer(){
+  const userInput=document.getElementById("answer").value.trim().toLowerCase();
+  const popup=document.getElementById("popup");
+  const message=document.getElementById("popup-message");
 
-  if (usedWords.length >= currentLevelWords.length) { showLevelCompleteScreen(); return; }
-  currentWord = getRandomWord();
-  document.getElementById("word").innerText = currentWord.uk;
-  document.getElementById("answer").value = "";
-}
-
-function checkAndNextWord() {
-  const userInput = document.getElementById("answer").value.trim().toLowerCase();
-  const popup = document.getElementById("popup");
-  const message = document.getElementById("popup-message");
-
-  if (currentLanguage === "english") {
-    const correctWord = currentWord.en.toLowerCase();
-    if (userInput === correctWord) {
-      showCorrect(popup, message);
-    } else {
-      showWrong(popup, message, currentWord.en);
-    }
+  if(currentLanguage==="english"){
+    if(userInput===currentWord.en.toLowerCase()){
+      showCorrect(popup,message);
+      usedWords.push(currentWord);
+      updateProgress();
+    }else showWrong(popup,message,currentWord.en);
   } else {
-    if (!selectedArticle) {
-      alert("Please select an article (der/die/das)!");
-      return;
-    }
-    const correctParts = currentWord.en.split(' ');
-    const correctArticle = correctParts[0].toLowerCase();
-    const correctNoun = correctParts[1].toLowerCase();
-    if (userInput === correctNoun && selectedArticle === correctArticle) {
-      showCorrect(popup, message);
-    } else {
-      showWrong(popup, message, currentWord.en);
-    }
+    if(!selectedArticle){ alert("Select article!"); return; }
+    const [correctArticle, correctNoun] = currentWord.en.toLowerCase().split(" ");
+    if(userInput===correctNoun && selectedArticle===correctArticle){
+      showCorrect(popup,message);
+      usedWords.push(currentWord);
+      updateProgress();
+    } else showWrong(popup,message,currentWord.en);
   }
 }
 
-function showCorrect(popup, message) {
-  message.innerText = "Correct!";
-  popup.className = "popup correct";
+function showCorrect(popup,message){
+  message.innerText="Correct!";
+  popup.className="popup correct";
   document.getElementById("correctSound1").play();
-  popup.style.display = "block";
-  setTimeout(() => { popup.style.display = "none"; displayNewWord(); }, 1500);
+  popup.style.display="block";
+  setTimeout(()=>popup.style.display="none",1000);
 }
 
-function showWrong(popup, message, correctAnswer) {
-  message.innerText = `Wrong! Correct: ${correctAnswer}`;
-  popup.className = "popup wrong";
+function showWrong(popup,message,correct){
+  message.innerText=`Wrong! Correct: ${correct}`;
+  popup.className="popup wrong";
   document.getElementById("wrongSound1").play();
-  popup.style.display = "block";
-  if (!wrongWords.includes(currentWord.uk)) wrongWords.push(currentWord.uk);
+  popup.style.display="block";
 }
 
-function closePopup() {
-  const popup = document.getElementById("popup");
-  popup.style.display = "none";
-  popup.className = "popup";
+function closePopup(){
+  const popup=document.getElementById("popup");
+  popup.style.display="none";
+  popup.className="popup";
 }
 
-function showLevelCompleteScreen() {
-  const popup = document.getElementById("popup");
-  const message = document.getElementById("popup-message");
-  let stats = wrongWords.length ? "Review: " + wrongWords.join(", ") : "All correct!";
-  message.innerText = `Level ${currentLevel + 1} complete!\n${stats}`;
-  popup.className = "popup completed";
-  const closeBtn = document.querySelector(".close-btn");
-  closeBtn.innerText = "Next Level";
-  closeBtn.onclick = () => {
-    popup.style.display = "none";
-    if (currentLevel < levels.length - 1) selectLevel(currentLevel + 1);
-    else selectLevel(0);
-  };
-  popup.style.display = "block";
-}
+languageButtons.english.onclick=()=>loadWords("english");
+languageButtons.german.onclick=()=>loadWords("german");
 
-languageButtons.english.onclick = () => loadWords("english");
-languageButtons.german.onclick = () => loadWords("german");
-
-window.onload = () => loadWords("english");
+// default load
+window.onload=()=>loadWords("english");
 </script>
 </body>
 </html>
