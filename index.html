@@ -58,10 +58,8 @@
 <audio id="wrongSound1" src="https://www.myinstants.com/media/sounds/wrong.mp3"></audio>
 
 <script>
-let allWords = [];
-const wordsPerLevel = 5;
-let levels = [];
-let currentLevel = 0;
+let allLevels = [];
+let currentLevelIndex = 0;
 let currentLevelWords = [];
 let usedWords = [];
 let currentWord = {};
@@ -75,30 +73,39 @@ const languageButtons = {
 const levelButtonsContainer = document.getElementById("level-buttons");
 const articleButtons = document.querySelectorAll("#article-buttons button");
 
-const englishWords = [
-  {uk:"кіт", en:"cat"}, {uk:"собака", en:"dog"}, {uk:"яблуко", en:"apple"},
-  {uk:"будинок", en:"house"}, {uk:"книга", en:"book"}, {uk:"стіл", en:"table"},
+// Example JSON structure for levels
+const englishLevels = [
+  { name:"Colors", words:[ {uk:"білий", en:"white"}, {uk:"зелений", en:"green"}, {uk:"синій", en:"blue"} ] },
+  { name:"Animals", words:[ {uk:"кіт", en:"cat"}, {uk:"собака", en:"dog"}, {uk:"птах", en:"bird"} ] }
 ];
-const germanWords = [
-  {uk:"кіт", en:"der katze"}, {uk:"собака", en:"die hunde"}, {uk:"яблуко", en:"das apfel"},
-  {uk:"будинок", en:"das haus"}, {uk:"книга", en:"die buch"}, {uk:"стіл", en:"der tisch"},
+const germanLevels = [
+  { name:"Colors", words:[ {uk:"білий", en:"der weiss"}, {uk:"зелений", en:"die grün"}, {uk:"синій", en:"das blau"} ] },
+  { name:"Animals", words:[ {uk:"кіт", en:"der katze"}, {uk:"собака", en:"die hunde"}, {uk:"птах", en:"der vogel"} ] }
 ];
 
+// Load levels based on language
 function loadWords(language){
   currentLanguage = language;
   selectedArticle = null;
   articleButtons.forEach(b=>b.classList.remove("selected"));
-  allWords = language==="english"? englishWords : germanWords;
+  allLevels = language==="english"? englishLevels : germanLevels;
 
-  levels = [];
-  for(let i=0;i<Math.ceil(allWords.length/wordsPerLevel);i++){
-    levels.push(allWords.slice(i*wordsPerLevel,(i+1)*wordsPerLevel));
-  }
-
-  highlightLanguageButton();
   createLevelButtons();
   toggleArticleButtons();
-  selectLevel(0, false);
+  selectLevel(0,false);
+  highlightLanguageButton();
+}
+
+// Create buttons using level names from JSON
+function createLevelButtons(){
+  levelButtonsContainer.innerHTML="";
+  allLevels.forEach((lvl,i)=>{
+    const btn=document.createElement("button");
+    btn.textContent = lvl.name;
+    btn.onclick=()=>selectLevel(i, currentLevelIndex!==i);
+    levelButtonsContainer.appendChild(btn);
+  });
+  updateLevelButtons();
 }
 
 function highlightLanguageButton(){
@@ -106,20 +113,9 @@ function highlightLanguageButton(){
   languageButtons.german.classList.toggle("active", currentLanguage==="german");
 }
 
-function createLevelButtons(){
-  levelButtonsContainer.innerHTML="";
-  levels.forEach((lvl,i)=>{
-    const btn=document.createElement("button");
-    btn.textContent=`Level ${i+1}`;
-    btn.onclick=()=>selectLevel(i, currentLevel!==i);
-    levelButtonsContainer.appendChild(btn);
-  });
-  updateLevelButtons();
-}
-
 function updateLevelButtons(){
   Array.from(levelButtonsContainer.children).forEach((btn,i)=>{
-    btn.classList.toggle("active", i===currentLevel);
+    btn.classList.toggle("active", i===currentLevelIndex);
   });
 }
 
@@ -135,19 +131,17 @@ articleButtons.forEach(btn=>{
   };
 });
 
-function selectLevel(levelIndex, reset=true){
+function selectLevel(index, reset=true){
+  currentLevelIndex=index;
+  currentLevelWords=allLevels[currentLevelIndex].words;
   if(reset){
-    currentLevel=levelIndex;
-    currentLevelWords=levels[currentLevel];
     usedWords=[];
     displayNewWord();
-  } else {
-    currentLevel=levelIndex;
-    currentLevelWords=levels[currentLevel];
   }
   updateLevelButtons();
 }
 
+// Display a random word from current level
 function displayNewWord(){
   if(currentLevelWords.length===0) return;
   currentWord=currentLevelWords[Math.floor(Math.random()*currentLevelWords.length)];
@@ -162,19 +156,19 @@ function updateProgress(){
   document.getElementById("progress-bar").style.width=(usedWords.length/currentLevelWords.length)*100+"%";
 }
 
+// Check answer and move to next word if correct
 function checkAndNext(){
   const userInput=document.getElementById("answer").value.trim().toLowerCase();
   const popup=document.getElementById("popup");
   const message=document.getElementById("popup-message");
 
   let correct=false;
-
   if(currentLanguage==="english"){
-    correct = userInput===currentWord.en.toLowerCase();
+    correct=userInput===currentWord.en.toLowerCase();
   } else {
     if(!selectedArticle){ alert("Select article!"); return; }
-    const [correctArticle, correctNoun] = currentWord.en.toLowerCase().split(" ");
-    correct = userInput===correctNoun && selectedArticle===correctArticle;
+    const [correctArticle, correctNoun]=currentWord.en.toLowerCase().split(" ");
+    correct=userInput===correctNoun && selectedArticle===correctArticle;
   }
 
   if(correct){
@@ -182,7 +176,11 @@ function checkAndNext(){
     popup.className="popup correct";
     document.getElementById("correctSound1").play();
     popup.style.display="block";
-    setTimeout(()=>{ popup.style.display="none"; usedWords.push(currentWord); displayNewWord(); },1000);
+    setTimeout(()=>{
+      popup.style.display="none";
+      if(!usedWords.includes(currentWord)) usedWords.push(currentWord);
+      displayNewWord();
+    },1000);
   } else {
     message.innerText=`Wrong! Correct: ${currentWord.en}`;
     popup.className="popup wrong";
@@ -200,6 +198,7 @@ function closePopup(){
 languageButtons.english.onclick=()=>loadWords("english");
 languageButtons.german.onclick=()=>loadWords("german");
 
+// Load English by default
 window.onload=()=>loadWords("english");
 </script>
 </body>
