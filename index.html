@@ -141,8 +141,7 @@ function toggleArticleButtons(show){
 function getNextWord(){
   if(remainingWords.length===0) return null;
   const index = Math.floor(Math.random()*remainingWords.length);
-  const word = remainingWords[index];
-  return word;
+  return remainingWords[index];
 }
 
 function displayNewWord(){
@@ -176,7 +175,8 @@ function checkAndNextWord(){
     popup.style.display="block";
     // remove word from remainingWords
     remainingWords = remainingWords.filter(w=>w!==currentWord);
-    setTimeout(()=>{ popup.style.display="none"; displayNewWord(); },1500);
+    updateProgressBar();
+    setTimeout(()=>{ popup.style.display="none"; displayNewWord(); },500);
   } else {
     message.innerText = `Wrong! Correct: ${currentWord.en}`;
     popup.className="popup wrong";
@@ -198,12 +198,22 @@ function showLevelComplete(){
   const stats = wrongWords.length ? "Review: "+wrongWords.join(", ") : "All correct!";
   message.innerText = `Level ${allLevels[currentLevelIndex].name} complete!\n${stats}`;
   popup.className="popup completed";
+
+  // Add restart button
+  const closeBtn = popup.querySelector(".close-btn");
+  closeBtn.innerText = "Restart Level";
+  closeBtn.onclick = ()=>{
+    popup.style.display="none";
+    selectLevel(currentLevelIndex, true);
+  };
   popup.style.display="block";
+  updateProgressBar();
 }
 
 languageButtons.english.onclick = ()=>loadWords("english");
 languageButtons.german.onclick = ()=>loadWords("german");
 
+// Load English by default
 window.onload = ()=>loadWords("english");
 </script>
 
