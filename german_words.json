@@ -1,32 +1,18 @@
 [
-  {"uk": "кіт", "en": "die Katze"},
-  {"uk": "собака", "en": "der Hund"},
-  {"uk": "будинок", "en": "das Haus"},
-  {"uk": "яблуко", "en": "der Apfel"},
-  {"uk": "сонце", "en": "die Sonne"},
-  {"uk": "вода", "en": "das Wasser"},
-  {"uk": "книга", "en": "das Buch"},
-  {"uk": "стіл", "en": "der Tisch"},
-  {"uk": "стілець", "en": "der Stuhl"},
-  {"uk": "вікно", "en": "das Fenster"},
-  {"uk": "школа", "en": "die Schule"},
-  {"uk": "учитель", "en": "der Lehrer"},
-  {"uk": "ручка", "en": "der Stift"},
-  {"uk": "друг", "en": "der Freund"},
-  {"uk": "їжа", "en": "das Essen"},
-  {"uk": "робота", "en": "die Arbeit"},
-  {"uk": "місто", "en": "die Stadt"},
-  {"uk": "країна", "en": "das Land"},
-  {"uk": "машина", "en": "das Auto"},
-  {"uk": "дорога", "en": "die Straße"},
-  {"uk": "яблуня", "en": "der Apfelbaum"},
-  {"uk": "чашка", "en": "die Tasse"},
-  {"uk": "ліжко", "en": "das Bett"},
-  {"uk": "місяць", "en": "der Monat"},
-  {"uk": "день", "en": "der Tag"},
-  {"uk": "ніч", "en": "die Nacht"},
-  {"uk": "двері", "en": "die Tür"},
-  {"uk": "вулиця", "en": "die Straße"},
-  {"uk": "пташка", "en": "der Vogel"},
-  {"uk": "дерево", "en": "der Baum"}
+  {
+    "name": "Colors",
+    "words": [
+      {"uk": "білий", "en": "der weiss"},
+      {"uk": "зелений", "en": "die grün"},
+      {"uk": "синій", "en": "das blau"}
+    ]
+  },
+  {
+    "name": "Animals",
+    "words": [
+      {"uk": "кіт", "en": "der katze"},
+      {"uk": "собака", "en": "die hunde"},
+      {"uk": "птах", "en": "der vogel"}
+    ]
+  }
 ]
