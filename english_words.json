@@ -1,22 +1,18 @@
 [
-  { "uk": "кіт", "en": "cat" },
-  { "uk": "собака", "en": "dog" },
-  { "uk": "будинок", "en": "house" },
-  { "uk": "яблуко", "en": "apple" },
-  { "uk": "сонце", "en": "sun" },
-  { "uk": "вода", "en": "water" },
-  { "uk": "книга", "en": "book" },
-  { "uk": "стіл", "en": "table" },
-  { "uk": "стілець", "en": "chair" },
-  { "uk": "вікно", "en": "window" },
-  { "uk": "школа", "en": "school" },
-  { "uk": "учитель", "en": "teacher" },
-  { "uk": "ручка", "en": "pen" },
-  { "uk": "друг", "en": "friend" },
-  { "uk": "їжа", "en": "food" },
-  { "uk": "робота", "en": "work" },
-  { "uk": "місто", "en": "city" },
-  { "uk": "країна", "en": "country" },
-  { "uk": "машина", "en": "car" },
-  { "uk": "дорога", "en": "road" }
+  {
+    "name": "Colors",
+    "words": [
+      {"uk": "білий", "en": "white"},
+      {"uk": "зелений", "en": "green"},
+      {"uk": "синій", "en": "blue"}
+    ]
+  },
+  {
+    "name": "Animals",
+    "words": [
+      {"uk": "кіт", "en": "cat"},
+      {"uk": "собака", "en": "dog"},
+      {"uk": "птах", "en": "bird"}
+    ]
+  }
 ]
