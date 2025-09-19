@@ -17,7 +17,7 @@
   #article-buttons { margin-bottom:10px; }
   #article-buttons button { margin:0 5px; padding:5px 15px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background:#eee; color:#333; }
   #article-buttons button.selected { background:#4CAF50; color:white; font-weight:bold; box-shadow: 0 0 5px #333; }
-  button { margin-top:5px; padding:10px 20px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background:#4CAF50; color:white; }
+  button#checkNextButton { margin-top:5px; padding:10px 20px; font-size:16px; border:none; border-radius:5px; cursor:pointer; background:#4CAF50; color:white; }
   .popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.2); text-align:center; width:300px; z-index:1000; }
   .popup.correct { border:2px solid #4CAF50; }
   .popup.wrong { border:2px solid #ff4d4d; }
@@ -38,7 +38,6 @@
   <div id="progress-container"><div id="progress-bar"></div></div>
   <div class="word" id="word"></div>
 
-  <!-- German article selection -->
   <div id="article-buttons" style="display:none;">
     <button data-article="der">der</button>
     <button data-article="die">die</button>
@@ -47,8 +46,7 @@
 
   <input type="text" id="answer" maxlength="30" placeholder="Type your answer">
   <br>
-  <button id="checkButton" onclick="checkAnswer()">Check</button>
-  <button id="nextButton" onclick="displayNewWord()">Next Word</button>
+  <button id="checkNextButton" onclick="checkAndNext()">Check & Next</button>
 </div>
 
 <div id="popup" class="popup">
@@ -77,7 +75,6 @@ const languageButtons = {
 const levelButtonsContainer = document.getElementById("level-buttons");
 const articleButtons = document.querySelectorAll("#article-buttons button");
 
-// Sample word lists (replace with fetch for JSON in production)
 const englishWords = [
   {uk:"кіт", en:"cat"}, {uk:"собака", en:"dog"}, {uk:"яблуко", en:"apple"},
   {uk:"будинок", en:"house"}, {uk:"книга", en:"book"}, {uk:"стіл", en:"table"},
@@ -93,7 +90,6 @@ function loadWords(language){
   articleButtons.forEach(b=>b.classList.remove("selected"));
   allWords = language==="english"? englishWords : germanWords;
 
-  // split into levels
   levels = [];
   for(let i=0;i<Math.ceil(allWords.length/wordsPerLevel);i++){
     levels.push(allWords.slice(i*wordsPerLevel,(i+1)*wordsPerLevel));
@@ -102,7 +98,7 @@ function loadWords(language){
   highlightLanguageButton();
   createLevelButtons();
   toggleArticleButtons();
-  selectLevel(0);
+  selectLevel(0, false);
 }
 
 function highlightLanguageButton(){
@@ -115,7 +111,7 @@ function createLevelButtons(){
   levels.forEach((lvl,i)=>{
     const btn=document.createElement("button");
     btn.textContent=`Level ${i+1}`;
-    btn.onclick=()=>selectLevel(i);
+    btn.onclick=()=>selectLevel(i, currentLevel!==i);
     levelButtonsContainer.appendChild(btn);
   });
   updateLevelButtons();
@@ -139,12 +135,17 @@ articleButtons.forEach(btn=>{
   };
 });
 
-function selectLevel(levelIndex){
-  currentLevel=levelIndex;
-  currentLevelWords=levels[currentLevel];
-  usedWords=[];
+function selectLevel(levelIndex, reset=true){
+  if(reset){
+    currentLevel=levelIndex;
+    currentLevelWords=levels[currentLevel];
+    usedWords=[];
+    displayNewWord();
+  } else {
+    currentLevel=levelIndex;
+    currentLevelWords=levels[currentLevel];
+  }
   updateLevelButtons();
-  displayNewWord();
 }
 
 function displayNewWord(){
@@ -161,41 +162,33 @@ function updateProgress(){
   document.getElementById("progress-bar").style.width=(usedWords.length/currentLevelWords.length)*100+"%";
 }
 
-function checkAnswer(){
+function checkAndNext(){
   const userInput=document.getElementById("answer").value.trim().toLowerCase();
   const popup=document.getElementById("popup");
   const message=document.getElementById("popup-message");
 
+  let correct=false;
+
   if(currentLanguage==="english"){
-    if(userInput===currentWord.en.toLowerCase()){
-      showCorrect(popup,message);
-      usedWords.push(currentWord);
-      updateProgress();
-    }else showWrong(popup,message,currentWord.en);
+    correct = userInput===currentWord.en.toLowerCase();
   } else {
     if(!selectedArticle){ alert("Select article!"); return; }
     const [correctArticle, correctNoun] = currentWord.en.toLowerCase().split(" ");
-    if(userInput===correctNoun && selectedArticle===correctArticle){
-      showCorrect(popup,message);
-      usedWords.push(currentWord);
-      updateProgress();
-    } else showWrong(popup,message,currentWord.en);
+    correct = userInput===correctNoun && selectedArticle===correctArticle;
   }
-}
 
-function showCorrect(popup,message){
-  message.innerText="Correct!";
-  popup.className="popup correct";
-  document.getElementById("correctSound1").play();
-  popup.style.display="block";
-  setTimeout(()=>popup.style.display="none",1000);
-}
-
-function showWrong(popup,message,correct){
-  message.innerText=`Wrong! Correct: ${correct}`;
-  popup.className="popup wrong";
-  document.getElementById("wrongSound1").play();
-  popup.style.display="block";
+  if(correct){
+    message.innerText="Correct!";
+    popup.className="popup correct";
+    document.getElementById("correctSound1").play();
+    popup.style.display="block";
+    setTimeout(()=>{ popup.style.display="none"; usedWords.push(currentWord); displayNewWord(); },1000);
+  } else {
+    message.innerText=`Wrong! Correct: ${currentWord.en}`;
+    popup.className="popup wrong";
+    document.getElementById("wrongSound1").play();
+    popup.style.display="block";
+  }
 }
 
 function closePopup(){
@@ -207,7 +200,6 @@ function closePopup(){
 languageButtons.english.onclick=()=>loadWords("english");
 languageButtons.german.onclick=()=>loadWords("german");
 
-// default load
 window.onload=()=>loadWords("english");
 </script>
 </body>
