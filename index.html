@@ -74,11 +74,16 @@ async function loadWords(language){
   currentLanguage = language;
   selectedArticle = null;
   articleButtons.forEach(b=>b.classList.remove("selected"));
+  
+  // Load JSON for selected language
   allLevels = language==="english"? await fetch('english_words.json').then(r=>r.json()) 
                                   : await fetch('german_words.json').then(r=>r.json());
+  
   createLevelButtons();
   highlightLanguageButton();
-  currentLevelIndex = null; 
+
+  // Reset current level selection
+  currentLevelIndex = null;
   document.getElementById("word").innerText = "";
   document.getElementById("answer").value = "";
   toggleArticleButtons(false);
@@ -92,7 +97,9 @@ function createLevelButtons(){
     btn.onclick = ()=>selectLevel(i, currentLevelIndex!==i);
     levelButtonsContainer.appendChild(btn);
   });
-  updateLevelButtons();
+
+  // Remove active class from all buttons
+  Array.from(levelButtonsContainer.children).forEach(btn=>btn.classList.remove("active"));
 }
 
 function highlightLanguageButton(){
