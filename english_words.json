@@ -2,17 +2,17 @@
   {
     "name": "Colors",
     "words": [
-      {"uk": "білий", "en": "white"},
-      {"uk": "зелений", "en": "green"},
-      {"uk": "синій", "en": "blue"}
+      {"uk": "білий", "en": "white", "requiresArticle": false, "imageQuery": "white color"},
+      {"uk": "зелений", "en": "green", "requiresArticle": false, "imageQuery": "green color"},
+      {"uk": "синій", "en": "blue", "requiresArticle": false, "imageQuery": "blue color"}
     ]
   },
   {
     "name": "Animals",
     "words": [
-      {"uk": "кіт", "en": "cat"},
-      {"uk": "собака", "en": "dog"},
-      {"uk": "птах", "en": "bird"}
+      {"uk": "кіт", "en": "cat", "requiresArticle": false, "imageQuery": "cat"},
+      {"uk": "собака", "en": "dog", "requiresArticle": false, "imageQuery": "dog"},
+      {"uk": "птах", "en": "bird", "requiresArticle": false, "imageQuery": "bird"}
     ]
   }
 ]
