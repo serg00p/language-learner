@@ -73,6 +73,7 @@ const popupMessage = document.getElementById("popup-message");
 const popupBtn = document.getElementById("popup-btn");
 
 async function loadWords(language){
+  hidePopup();
   currentLanguage = language;
   selectedArticle = null;
   articleButtons.forEach(b=>b.classList.remove("selected"));
@@ -87,6 +88,7 @@ async function loadWords(language){
   currentLevelWords = [];
   remainingWords = [];
   wrongWords = [];
+  currentWord = {};
   document.getElementById("word").innerText = "";
   document.getElementById("answer").value = "";
   updateProgressBar();
@@ -110,6 +112,7 @@ function highlightLanguageButton(){
 }
 
 function selectLevel(index, allowReset=true){
+  hidePopup();
   if(currentLevelIndex===index && !allowReset) return;
   currentLevelIndex = index;
   currentLevelWords = [...allLevels[index].words];
@@ -178,7 +181,7 @@ function checkWord(){
 
     popupMessage.innerText = "Правильно!";
     popup.className = "popup correct";
-    popupBtn.style.display = "none"; // hide button for correct answer
+    popupBtn.style.display = "none"; 
     popup.style.display = "block";
 
     setTimeout(()=>{
@@ -192,7 +195,7 @@ function checkWord(){
     popupMessage.innerText = `Неправильно! Правильна відповідь: ${currentWord.en}`;
     popup.className = "popup wrong";
     popupBtn.innerText = "Спробувати ще раз";
-    popupBtn.style.display = "inline-block"; // show button for wrong
+    popupBtn.style.display = "inline-block";
     popupBtn.onclick = ()=>{ popup.style.display="none"; document.getElementById("answer").value=""; };
     popup.style.display = "block";
   }
@@ -201,14 +204,19 @@ function checkWord(){
 function showLevelComplete(){
   popupMessage.innerText = `Рівень "${allLevels[currentLevelIndex].name}" завершено!\n` + 
                            (wrongWords.length ? "Повторіть: "+wrongWords.join(", ") : "Всі правильно!");
-  popup.className="popup correct";
+  popup.className = "popup correct";
   popupBtn.innerText = "Перезапустити рівень";
   popupBtn.style.display = "inline-block";
   popupBtn.onclick = ()=>{
     popup.style.display="none";
     selectLevel(currentLevelIndex, true);
   };
-  popup.style.display="block";
+  popup.style.display = "block";
+}
+
+function hidePopup(){
+  popup.style.display="none";
+  popup.className = "popup";
 }
 
 languageButtons.english.onclick = ()=>loadWords("english");
