@@ -1,18 +1,18 @@
 [
   {
     "name": "Colors",
-    "words": [
-      {"uk": "білий", "en": "der weiss"},
-      {"uk": "зелений", "en": "die grün"},
-      {"uk": "синій", "en": "das blau"}
+    "words":[
+      {"uk":"білий","en":"weiss","requiresArticle":false},
+      {"uk":"зелений","en":"grün","requiresArticle":false},
+      {"uk":"синій","en":"blau","requiresArticle":false}
     ]
   },
   {
     "name": "Animals",
-    "words": [
-      {"uk": "кіт", "en": "der katze"},
-      {"uk": "собака", "en": "die hunde"},
-      {"uk": "птах", "en": "der vogel"}
+    "words":[
+      {"uk":"кіт","en":"der katze","requiresArticle":true},
+      {"uk":"собака","en":"die hunde","requiresArticle":true},
+      {"uk":"птах","en":"der vogel","requiresArticle":true}
     ]
   }
 ]
