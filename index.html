@@ -348,9 +348,16 @@ function updateProgressBar(){
 function checkWord(){
   if(!currentWord) return;
   let userInput = document.getElementById("answer").value.trim().toLowerCase();
+
+  // у німецькому режимі замінюємо ss → ß
+  if(currentLanguage === "german"){
+    userInput = userInput.replace(/ss/g, "ß");
+  }
+
   if(currentLanguage==="german" && currentWord.requiresArticle && selectedArticle){
     userInput = selectedArticle + " " + userInput;
   }
+
   if(userInput === currentWord.en.toLowerCase()){
     document.getElementById("correctSound").play();
     remainingWords = remainingWords.filter(w=>w!==currentWord);
