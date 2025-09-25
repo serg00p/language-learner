@@ -1,32 +1,30 @@
 [
   {
-    "name": "Colors",
+    "name": "Greetings",
     "words": [
-      {"uk": "білий", "en": "weiß", "requiresArticle": false, "imageQuery": "white color"},
-      {"uk": "зелений", "en": "grün", "requiresArticle": false, "imageQuery": "green color"},
-      {"uk": "синій", "en": "blau", "requiresArticle": false, "imageQuery": "blue color"},
-      {"uk": "червоний", "en": "rot", "requiresArticle": false, "imageQuery": "red color"},
-      {"uk": "жовтий", "en": "gelb", "requiresArticle": false, "imageQuery": "yellow color"}
+      {"uk": "Привіт", "en": "Hallo", "requiresArticle": false, "imageQuery": "hello greeting"},
+      {"uk": "Доброго ранку", "en": "Guten Morgen", "requiresArticle": false, "imageQuery": "good morning"},
+      {"uk": "Добрий день", "en": "Guten Tag", "requiresArticle": false, "imageQuery": "good day greeting"},
+      {"uk": "Добрий вечір", "en": "Guten Abend", "requiresArticle": false, "imageQuery": "good evening"},
+      {"uk": "До побачення", "en": "Auf Wiedersehen", "requiresArticle": false, "imageQuery": "goodbye"}
     ]
   },
   {
-    "name": "Animals",
+    "name": "Family",
     "words": [
-      {"uk": "кіт", "en": "die Katze", "requiresArticle": true, "imageQuery": "cat"},
-      {"uk": "собака", "en": "der Hund", "requiresArticle": true, "imageQuery": "dog"},
-      {"uk": "птах", "en": "der Vogel", "requiresArticle": true, "imageQuery": "bird"},
-      {"uk": "кролик", "en": "der Hase", "requiresArticle": true, "imageQuery": "rabbit"},
-      {"uk": "корова", "en": "die Kuh", "requiresArticle": true, "imageQuery": "cow"}
-    ]
-  },
-  {
-    "name": "Fruits",
-    "words": [
-      {"uk": "яблуко", "en": "der Apfel", "requiresArticle": true, "imageQuery": "apple"},
-      {"uk": "банан", "en": "die Banane", "requiresArticle": true, "imageQuery": "banana"},
-      {"uk": "виноград", "en": "die Traube", "requiresArticle": true, "imageQuery": "grapes"},
-      {"uk": "груша", "en": "die Birne", "requiresArticle": true, "imageQuery": "pear"},
-      {"uk": "апельсин", "en": "die Orange", "requiresArticle": true, "imageQuery": "orange fruit"}
+      {"uk": "сім'я", "en": "die Familie", "requiresArticle": true, "imageQuery": "family"},
+      {"uk": "батько", "en": "der Vater", "requiresArticle": true, "imageQuery": "father"},
+      {"uk": "мати", "en": "die Mutter", "requiresArticle": true, "imageQuery": "mother"},
+      {"uk": "син", "en": "der Sohn", "requiresArticle": true, "imageQuery": "son"},
+      {"uk": "донька", "en": "die Tochter", "requiresArticle": true, "imageQuery": "daughter"},
+      {"uk": "брат", "en": "der Bruder", "requiresArticle": true, "imageQuery": "brother"},
+      {"uk": "сестра", "en": "die Schwester", "requiresArticle": true, "imageQuery": "sister"},
+      {"uk": "дідусь", "en": "der Großvater", "requiresArticle": true, "imageQuery": "grandfather"},
+      {"uk": "бабуся", "en": "die Großmutter", "requiresArticle": true, "imageQuery": "grandmother"},
+      {"uk": "онука (дівчинка)", "en": "die Enkelin", "requiresArticle": true, "imageQuery": "granddaughter"},
+      {"uk": "онук (хлопець)", "en": "der Enkel", "requiresArticle": true, "imageQuery": "grandson"},
+      {"uk": "дядько", "en": "der Onkel", "requiresArticle": true, "imageQuery": "uncle"},
+      {"uk": "тітка", "en": "die Tante", "requiresArticle": true, "imageQuery": "aunt"}
     ]
   }
 ]
