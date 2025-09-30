@@ -206,6 +206,14 @@ const popupBtn = document.getElementById("popup-btn");
 const wordDiv = document.getElementById("word");
 const wordImg = document.getElementById("word-image");
 
+// ✅ Trigger checkWord() when Enter is pressed
+document.getElementById("answer").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    checkWord();
+  }
+});
+
 // Load API key
 async function loadConfig() {
   try {
