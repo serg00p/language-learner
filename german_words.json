@@ -31,9 +31,13 @@
       {"uk": "бабуся", "en": "die Großmutter", "requiresArticle": true, "imageQuery": "grandmother"},
       {"uk": "дружина", "en": "die Ehefrau", "requiresArticle": true, "imageQuery": "wife"},
       {"uk": "чоловік", "en": "der Ehemann", "requiresArticle": true, "imageQuery": "husband"},
-      {"uk": "партнер / партнерка", "en": "der Partner / die Partnerin", "requiresArticle": true, "imageQuery": "partner"},
+      {"uk": "партнер", "en": "der Partner", "requiresArticle": true, "imageQuery": "partner"},
+      {"uk": "партнерка", "en": "die Partnerin", "requiresArticle": true, "imageQuery": "partner"},
+      {"uk": "друг", "en": "der Freund", "requiresArticle": true, "imageQuery": "friend"},
+      {"uk": "подруга", "en": "die Freundin", "requiresArticle": true, "imageQuery": "friend"},
+      {"uk": "хлопець (в романтичних стосунках)", "en": "der Freund", "requiresArticle": true, "imageQuery": "friend"},
+      {"uk": "дівчина (в романтичних стосунках)", "en": "die Freundin", "requiresArticle": true, "imageQuery": "friend"}
       {"uk": "родич", "en": "der Verwandte", "requiresArticle": true, "imageQuery": "relative"},
-      {"uk": "друг / подруга; хлопець / дівчина", "en": "der Freund / die Freundin", "requiresArticle": true, "imageQuery": "friend"},
       {"uk": "знайомий", "en": "der Bekannte", "requiresArticle": true, "imageQuery": "acquaintance"},
       {"uk": "гість", "en": "der Gast", "requiresArticle": true, "imageQuery": "guest"},
       {"uk": "бос, шеф", "en": "der Chef", "requiresArticle": true, "imageQuery": "boss"}
