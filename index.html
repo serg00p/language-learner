@@ -15,12 +15,10 @@ body {
   min-height:100vh; 
   margin:0; 
 }
-
 #language-buttons, #level-buttons, #mode-buttons { 
   text-align:center; 
   margin:10px 0; 
 }
-
 #language-buttons button, #level-buttons button, #article-buttons button, #mode-buttons button { 
   margin:5px; 
   padding:8px 16px; 
@@ -31,12 +29,10 @@ body {
   background:#2196F3; 
   color:white; 
 }
-
 #language-buttons button.active, #level-buttons button.active, #article-buttons button.selected, #mode-buttons button.active { 
   box-shadow:0 0 10px #666; 
   background-color: #4CAF50;
 }
-
 .container { 
   text-align:center; 
   background:#fff; 
@@ -45,7 +41,6 @@ body {
   box-shadow:0 4px 12px rgba(0,0,0,0.2); 
   width:350px; 
 }
-
 #progress-container { 
   width:100%; 
   background:#ddd; 
@@ -54,7 +49,6 @@ body {
   height:20px; 
   overflow:hidden; 
 }
-
 #progress-bar { 
   height:100%; 
   width:0; 
@@ -62,13 +56,11 @@ body {
   border-radius:5px; 
   transition: width 0.3s ease; 
 }
-
 .word { 
   font-size:24px; 
   font-weight:bold; 
   margin-bottom:10px; 
 }
-
 #word-image { 
   display: block; 
   max-width:100%; 
@@ -76,12 +68,10 @@ body {
   border-radius:8px; 
   margin:0 auto 10px auto; 
 }
-
 #article-buttons {
   margin: 10px 0;
   text-align: center;
 }
-
 input { 
   font-size:18px; 
   padding:5px; 
@@ -91,7 +81,6 @@ input {
   width:100%; 
   box-sizing:border-box; 
 }
-
 button.check { 
   margin-top:10px; 
   padding:10px 20px; 
@@ -102,7 +91,6 @@ button.check {
   background:#4CAF50; 
   color:white; 
 }
-
 .popup { 
   display:none; 
   position:fixed; 
@@ -117,15 +105,12 @@ button.check {
   width:300px; 
   z-index:1000; 
 }
-
 .popup.correct { 
   border:2px solid #4CAF50; 
 }
-
 .popup.wrong { 
   border:2px solid #ff4d4d; 
 }
-
 .close-btn { 
   margin-top:10px; 
   padding:5px 10px; 
@@ -157,7 +142,6 @@ button.check {
   <div class="word" id="word"></div>
   <img id="word-image" alt="Word illustration">
 
-  <!-- Article buttons above input field -->
   <div id="article-buttons">
     <button data-article="der">Der</button>
     <button data-article="die">Die</button>
@@ -226,28 +210,40 @@ async function loadConfig() {
 }
 
 async function loadWords(language){
-  hidePopup();
-  currentLanguage = language;
-  selectedArticle = null;
-  articleButtons.forEach(b=>b.classList.remove("selected"));
-  
-  allLevels = language==="english"? await fetch('english_words.json').then(r=>r.json())
-                                  : await fetch('german_words.json').then(r=>r.json());
-  
-  createLevelButtons();
-  highlightLanguageButton();
+  try {
+    console.log(`Loading words for: ${language}`);
+    hidePopup();
+    currentLanguage = language;
+    selectedArticle = null;
+    articleButtons.forEach(b=>b.classList.remove("selected"));
 
-  currentLevelIndex = null;
-  currentLevelWords = [];
-  remainingWords = [];
-  wrongWords = [];
-  currentWord = {};
-  wordDiv.innerText = "";
-  wordImg.style.display="none";
-  document.getElementById("answer").value = "";
-  updateProgressBar();
-  updateLevelButtons();
-  toggleArticleButtons(false);
+    const fileName = language === "english" ? "english_words.json" : "german_words.json";
+    const response = await fetch(fileName);
+    if (!response.ok) throw new Error(`Failed to load ${fileName}: ${response.statusText}`);
+    
+    allLevels = await response.json();
+    if(!Array.isArray(allLevels)) throw new Error(`${fileName} JSON is not an array`);
+    if(allLevels.length === 0) throw new Error(`${fileName} is empty`);
+
+    createLevelButtons();
+    highlightLanguageButton();
+
+    currentLevelIndex = null;
+    currentLevelWords = [];
+    remainingWords = [];
+    wrongWords = [];
+    currentWord = {};
+    wordDiv.innerText = "";
+    wordImg.style.display="none";
+    document.getElementById("answer").value = "";
+    updateProgressBar();
+    updateLevelButtons();
+    toggleArticleButtons(false);
+
+  } catch(e) {
+    console.error(e);
+    alert(`Помилка при завантаженні слів: ${e.message}`);
+  }
 }
 
 function createLevelButtons(){
@@ -270,18 +266,23 @@ function highlightModeButton(){
 }
 
 function selectLevel(index, allowReset=true){
-  hidePopup();
-  if(currentLevelIndex===index && !allowReset) return;
-  currentLevelIndex = index;
-  currentLevelWords = [...allLevels[index].words];
-  remainingWords = [...currentLevelWords];
-  wrongWords = [];
-  currentWord = {};
-  selectedArticle = null;
-  articleButtons.forEach(b=>b.classList.remove("selected"));
-  updateLevelButtons();
-  displayNewWord();
-  updateProgressBar();
+  try {
+    hidePopup();
+    if(currentLevelIndex===index && !allowReset) return;
+    currentLevelIndex = index;
+    currentLevelWords = [...allLevels[index].words];
+    remainingWords = [...currentLevelWords];
+    wrongWords = [];
+    currentWord = {};
+    selectedArticle = null;
+    articleButtons.forEach(b=>b.classList.remove("selected"));
+    updateLevelButtons();
+    displayNewWord();
+    updateProgressBar();
+  } catch(e) {
+    console.error(e);
+    alert(`Помилка при виборі рівня: ${e.message}`);
+  }
 }
 
 function updateLevelButtons(){
@@ -309,41 +310,43 @@ function getNextWord(){
 }
 
 async function displayNewWord(){
-  if(remainingWords.length===0){ showLevelComplete(); return; }
-  currentWord = getNextWord();
-  document.getElementById("answer").value = "";
-  selectedArticle = null;
-  articleButtons.forEach(b=>b.classList.remove("selected"));
-  toggleArticleButtons(currentLanguage==="german" && currentWord.requiresArticle);
+  try {
+    if(!remainingWords || remainingWords.length===0){ showLevelComplete(); return; }
+    currentWord = getNextWord();
+    if(!currentWord) throw new Error("No word returned");
 
-  if(mode==="translate"){
-    wordDiv.innerText = currentWord.uk;
-    wordImg.style.display="none";
-  } else {
-    // picture mode
-    try {
+    document.getElementById("answer").value = "";
+    selectedArticle = null;
+    articleButtons.forEach(b=>b.classList.remove("selected"));
+    toggleArticleButtons(currentLanguage==="german" && currentWord.requiresArticle);
+
+    if(mode==="translate"){
+      wordDiv.innerText = currentWord.uk;
+      wordImg.style.display="none";
+    } else {
       const query = encodeURIComponent(currentWord.imageQuery || currentWord.uk);
       const res = await fetch(`https://api.pexels.com/v1/search?query=${query}&per_page=1`, {
         headers: { Authorization: PEXELS_API_KEY }
       });
-      if(!res.ok) throw new Error("API error");
+      if(!res.ok) throw new Error("Pexels API error");
       const data = await res.json();
-      if(data.photos.length>0){
+      if(data.photos && data.photos.length>0){
         wordImg.src = data.photos[0].src.medium;
         wordImg.style.display="block";
         wordDiv.innerText = "";
       } else {
-        throw new Error("No image");
+        throw new Error("No image found");
       }
-    } catch (e) {
-      wordDiv.innerText = currentWord.uk;
-      wordImg.style.display="none";
-      popupMessage.innerText = "Не вдалося завантажити зображення (можливо, ліміт API вичерпано). Перехід у режим перекладу.";
-      popup.className = "popup wrong";
-      popupBtn.style.display = "inline-block";
-      popupBtn.onclick = ()=>{ popup.style.display="none"; mode="translate"; highlightModeButton(); displayNewWord(); };
-      popup.style.display = "block";
     }
+  } catch(e){
+    console.error(e);
+    wordDiv.innerText = currentWord?.uk || "Помилка";
+    wordImg.style.display="none";
+    popupMessage.innerText = `Помилка: ${e.message}`;
+    popup.className = "popup wrong";
+    popupBtn.style.display = "inline-block";
+    popupBtn.onclick = ()=>{ popup.style.display="none"; };
+    popup.style.display = "block";
   }
 }
 
@@ -354,36 +357,40 @@ function updateProgressBar(){
 }
 
 function checkWord(){
-  if(!currentWord) return;
-  let userInput = document.getElementById("answer").value.trim().toLowerCase();
+  try {
+    if(!currentWord) return;
+    let userInput = document.getElementById("answer").value.trim().toLowerCase();
 
-  // у німецькому режимі замінюємо ss → ß
-  if(currentLanguage === "german"){
-    userInput = userInput.replace(/ss/g, "ß");
-  }
+    if(currentLanguage === "german"){
+      userInput = userInput.replace(/ss/g, "ß");
+    }
 
-  if(currentLanguage==="german" && currentWord.requiresArticle && selectedArticle){
-    userInput = selectedArticle + " " + userInput;
-  }
+    if(currentLanguage==="german" && currentWord.requiresArticle && selectedArticle){
+      userInput = selectedArticle + " " + userInput;
+    }
 
-  if(userInput === currentWord.en.toLowerCase()){
-    document.getElementById("correctSound").play();
-    remainingWords = remainingWords.filter(w=>w!==currentWord);
-    updateProgressBar();
-    popupMessage.innerText = "Правильно!";
-    popup.className = "popup correct";
-    popupBtn.style.display = "none"; 
-    popup.style.display = "block";
-    setTimeout(()=>{ popup.style.display = "none"; displayNewWord(); }, 1200);
-  } else {
-    document.getElementById("wrongSound").play();
-    if(!wrongWords.includes(currentWord.uk)) wrongWords.push(currentWord.uk);
-    popupMessage.innerText = `Неправильно! Правильна відповідь: ${currentWord.en}`;
-    popup.className = "popup wrong";
-    popupBtn.innerText = "Спробувати ще раз";
-    popupBtn.style.display = "inline-block";
-    popupBtn.onclick = ()=>{ popup.style.display="none"; document.getElementById("answer").value=""; };
-    popup.style.display = "block";
+    if(userInput === currentWord.en.toLowerCase()){
+      document.getElementById("correctSound").play();
+      remainingWords = remainingWords.filter(w=>w!==currentWord);
+      updateProgressBar();
+      popupMessage.innerText = "Правильно!";
+      popup.className = "popup correct";
+      popupBtn.style.display = "none"; 
+      popup.style.display = "block";
+      setTimeout(()=>{ popup.style.display = "none"; displayNewWord(); }, 1200);
+    } else {
+      document.getElementById("wrongSound").play();
+      if(!wrongWords.includes(currentWord.uk)) wrongWords.push(currentWord.uk);
+      popupMessage.innerText = `Неправильно! Правильна відповідь: ${currentWord.en}`;
+      popup.className = "popup wrong";
+      popupBtn.innerText = "Спробувати ще раз";
+      popupBtn.style.display = "inline-block";
+      popupBtn.onclick = ()=>{ popup.style.display="none"; document.getElementById("answer").value=""; };
+      popup.style.display = "block";
+    }
+  } catch(e){
+    console.error(e);
+    alert("Помилка при перевірці слова: "+e.message);
   }
 }
 
@@ -405,11 +412,13 @@ function hidePopup(){
   popup.className = "popup";
 }
 
+// Button events
 languageButtons.english.onclick = ()=>loadWords("english");
 languageButtons.german.onclick = ()=>loadWords("german");
 modeButtons.translate.onclick = ()=>{ mode="translate"; highlightModeButton(); displayNewWord(); };
 modeButtons.picture.onclick = ()=>{ mode="picture"; highlightModeButton(); displayNewWord(); };
 
+// On load
 window.onload = async ()=>{
   await loadConfig(); // load Pexels API key
   loadWords("english");
