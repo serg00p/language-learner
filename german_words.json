@@ -30,7 +30,7 @@
       {"uk": "дідусь", "en": "der Großvater", "requiresArticle": true, "imageQuery": "grandfather"},
       {"uk": "бабуся", "en": "die Großmutter", "requiresArticle": true, "imageQuery": "grandmother"},
       {"uk": "дружина", "en": "die Ehefrau", "requiresArticle": true, "imageQuery": "wife"},
-      {"uk": "чоловік (одружений)", "en": "der Ehemann", "requiresArticle": true, "imageQuery": "husband"},
+      {"uk": "чоловік одружений", "en": "der Ehemann", "requiresArticle": true, "imageQuery": "husband"},
       {"uk": "партнер", "en": "der Partner", "requiresArticle": true, "imageQuery": "partner"},
       {"uk": "партнерка", "en": "die Partnerin", "requiresArticle": true, "imageQuery": "partner"},
       {"uk": "друг", "en": "der Freund", "requiresArticle": true, "imageQuery": "friend"},
